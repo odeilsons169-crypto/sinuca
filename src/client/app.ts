@@ -4,6 +4,7 @@
 import './styles/main.css';
 import './styles/landing-extra.css';
 import './styles/checkout.css';
+import './styles/mobile.css'; // CSS Responsivo para Mobile/PWA
 
 import { LandingPage, loadLiveRooms, loadReviews, loadTournaments, loadRankings } from './pages/LandingPage.js';
 import { LoginPage } from './pages/LoginPage.js';
@@ -46,8 +47,8 @@ const urlRoutes: Record<string, Page> = {
 };
 
 // Estado de manutenção - IMPORTANTE: começa como false e só muda se a API retornar true
-let maintenanceStatus: { 
-  enabled: boolean; 
+let maintenanceStatus: {
+  enabled: boolean;
   message: string;
   contacts?: {
     whatsapp: string;
@@ -160,23 +161,23 @@ class App {
     try {
       const response = await fetch('/api/settings/public/maintenance');
       const data = await response.json();
-      
+
       if (data) {
         // Só considera manutenção ativa se enabled for EXATAMENTE true
         const isEnabled = data.enabled === true;
-        
+
         maintenanceStatus = {
           enabled: isEnabled,
           message: data.message || '',
           contacts: data.contacts,
         };
         maintenanceStatusLoaded = true;
-        
+
         // Log para debug
-        console.log('[Manutenção] Status do servidor:', { 
-          enabled: isEnabled, 
+        console.log('[Manutenção] Status do servidor:', {
+          enabled: isEnabled,
           rawValue: data.enabled,
-          typeOf: typeof data.enabled 
+          typeOf: typeof data.enabled
         });
       }
     } catch (err) {
@@ -221,7 +222,7 @@ class App {
     // Verificar se é usuário admin
     const state = gameStore.getState();
     const isAdminUser = state.user && ['admin', 'super_admin', 'manager', 'employee'].includes(state.user.role || '');
-    
+
     // Usuários admin podem acessar tudo
     if (isAdminUser) {
       return false;
@@ -276,7 +277,7 @@ class App {
       // Verificar se usuário está suspenso
       if (user.is_suspended || user.status === 'suspended') {
         const suspendedUntil = user.suspended_until ? new Date(user.suspended_until) : null;
-        
+
         // Se a suspensão já expirou, permitir acesso
         if (suspendedUntil && suspendedUntil < new Date()) {
           console.log('[App] Suspensão expirada, permitindo acesso');

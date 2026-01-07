@@ -1,44 +1,340 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#0f0f1a">
+  <meta name="apple-mobile-web-app-title" content="Sinuca">
+  <meta name="theme-color" content="#1a1a2e">
   <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-TileColor" content="#1a1a2e">
+  <meta name="msapplication-tap-highlight" content="no">
   <title>🎱 Sinuca Online - Jogue Agora!</title>
-  
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Apple Touch Icons -->
+  <link rel="apple-touch-icon" href="/icons/icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-152x152.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-72x72.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-72x72.png">
+
+  <!-- Apple Splash Screens -->
+  <link rel="apple-touch-startup-image" href="/icons/splash-640x1136.png" media="(device-width: 320px)">
+  <link rel="apple-touch-startup-image" href="/icons/splash-750x1334.png"
+    media="(device-width: 375px) and (device-height: 667px)">
+  <link rel="apple-touch-startup-image" href="/icons/splash-1242x2208.png"
+    media="(device-width: 414px) and (device-height: 736px)">
+  <link rel="apple-touch-startup-image" href="/icons/splash-1125x2436.png"
+    media="(device-width: 375px) and (device-height: 812px)">
+  <link rel="apple-touch-startup-image" href="/icons/splash-1284x2778.png"
+    media="(device-width: 428px) and (device-height: 926px)">
+
   <!-- SEO & Social Sharing -->
-  <meta name="description" content="Jogue Sinuca Online contra amigos ou IA! Mesas realistas, física precisa e modo aposta. Cadastre-se e ganhe créditos.">
+  <meta name="description"
+    content="Jogue Sinuca Online contra amigos ou IA! Mesas realistas, física precisa e modo aposta. Cadastre-se e ganhe créditos.">
   <meta property="og:title" content="🎱 Sinuca Online - Desafie seus amigos!">
-  <meta property="og:description" content="A melhor experiência de Sinuca no navegador. Modos 8-Ball, 9-Ball (Brasileira) e Aposta.">
+  <meta property="og:description"
+    content="A melhor experiência de Sinuca no navegador. Modos 8-Ball, 9-Ball (Brasileira) e Aposta.">
   <meta property="og:image" content="https://placehold.co/1200x630/1a1a24/42dc8e?text=Sinuca+Online">
   <meta property="og:url" content="/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  
+
   <!-- Performance & Preload -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-  
+
   <style>
     /* Critical CSS - Prevent FOUC */
-    html, body { 
-      margin: 0; 
-      padding: 0; 
-      background: #0f0f1a; 
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0f0f1a;
       overflow-x: hidden;
       -webkit-tap-highlight-color: transparent;
       -webkit-touch-callout: none;
       touch-action: manipulation;
     }
-    #app { min-height: 100vh; min-height: 100dvh; }
+
+    #app {
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+
+    /* PWA Install Banner */
+    .pwa-install-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border-top: 2px solid #00ff88;
+      padding: 16px 20px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      z-index: 99999;
+      box-shadow: 0 -4px 20px rgba(0, 255, 136, 0.2);
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+      }
+
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    .pwa-install-banner.show {
+      display: flex;
+    }
+
+    .pwa-install-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #00ff88, #00d4ff);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .pwa-install-text {
+      flex: 1;
+      color: #fff;
+    }
+
+    .pwa-install-text h4 {
+      margin: 0 0 4px 0;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .pwa-install-text p {
+      margin: 0;
+      font-size: 12px;
+      color: #888;
+    }
+
+    .pwa-install-btn {
+      background: linear-gradient(135deg, #00ff88, #00d4ff);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      color: #000;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .pwa-install-close {
+      background: none;
+      border: none;
+      color: #666;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    /* iOS Install Instructions */
+    .ios-install-modal {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #1a1a2e;
+      border-radius: 20px 20px 0 0;
+      padding: 24px;
+      z-index: 100000;
+      display: none;
+      animation: slideUp 0.3s ease-out;
+    }
+
+    .ios-install-modal.show {
+      display: block;
+    }
+
+    .ios-install-modal h3 {
+      color: #fff;
+      margin: 0 0 16px 0;
+      text-align: center;
+    }
+
+    .ios-install-steps {
+      color: #ccc;
+      font-size: 14px;
+    }
+
+    .ios-install-steps li {
+      padding: 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ios-install-close-btn {
+      width: 100%;
+      background: #333;
+      border: none;
+      color: #fff;
+      padding: 14px;
+      border-radius: 12px;
+      margin-top: 16px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* Overlay */
+    .pwa-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 99998;
+      display: none;
+    }
+
+    .pwa-overlay.show {
+      display: block;
+    }
   </style>
 </head>
+
 <body>
   <div id="app"></div>
+
+  <!-- PWA Install Banner (Android/Desktop) -->
+  <div id="pwa-install-banner" class="pwa-install-banner">
+    <div class="pwa-install-icon">🎱</div>
+    <div class="pwa-install-text">
+      <h4>Instalar Sinuca Online</h4>
+      <p>Jogue direto da tela inicial!</p>
+    </div>
+    <button id="pwa-install-btn" class="pwa-install-btn">Instalar</button>
+    <button id="pwa-install-close" class="pwa-install-close">✕</button>
+  </div>
+
+  <!-- iOS Install Modal -->
+  <div id="pwa-overlay" class="pwa-overlay"></div>
+  <div id="ios-install-modal" class="ios-install-modal">
+    <h3>📲 Instalar Sinuca Online</h3>
+    <ol class="ios-install-steps">
+      <li><span style="font-size: 24px;">📤</span> Toque no botão <strong>Compartilhar</strong></li>
+      <li><span style="font-size: 24px;">➕</span> Role e toque em <strong>"Adicionar à Tela de Início"</strong></li>
+      <li><span style="font-size: 24px;">✅</span> Toque em <strong>"Adicionar"</strong></li>
+    </ol>
+    <button id="ios-install-close" class="ios-install-close-btn">Entendi</button>
+  </div>
+
   <script type="module" src="./src/client/app.ts"></script>
+
+  <!-- PWA & Service Worker -->
+  <script>
+    // Registrar Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((reg) => {
+            console.log('✅ Service Worker registrado:', reg.scope);
+          })
+          .catch((err) => {
+            console.error('❌ Erro ao registrar Service Worker:', err);
+          });
+      });
+    }
+
+    // PWA Install Prompt
+    let deferredPrompt;
+    const installBanner = document.getElementById('pwa-install-banner');
+    const installBtn = document.getElementById('pwa-install-btn');
+    const installClose = document.getElementById('pwa-install-close');
+    const iosModal = document.getElementById('ios-install-modal');
+    const iosClose = document.getElementById('ios-install-close');
+    const overlay = document.getElementById('pwa-overlay');
+
+    // Detectar iOS
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+    // Mostrar banner após 3 segundos (se não instalado)
+    setTimeout(() => {
+      if (!isInStandaloneMode && !localStorage.getItem('pwa-install-dismissed')) {
+        if (isIOS) {
+          // iOS: mostrar instruções
+          iosModal.classList.add('show');
+          overlay.classList.add('show');
+        }
+      }
+    }, 5000);
+
+    // Android/Desktop: capturar evento beforeinstallprompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+
+      if (!isInStandaloneMode && !localStorage.getItem('pwa-install-dismissed')) {
+        installBanner.classList.add('show');
+      }
+    });
+
+    // Botão instalar (Android/Desktop)
+    installBtn?.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+
+        if (outcome === 'accepted') {
+          console.log('✅ PWA instalado!');
+        }
+
+        deferredPrompt = null;
+        installBanner.classList.remove('show');
+      }
+    });
+
+    // Fechar banner
+    installClose?.addEventListener('click', () => {
+      installBanner.classList.remove('show');
+      localStorage.setItem('pwa-install-dismissed', 'true');
+    });
+
+    // Fechar modal iOS
+    iosClose?.addEventListener('click', () => {
+      iosModal.classList.remove('show');
+      overlay.classList.remove('show');
+      localStorage.setItem('pwa-install-dismissed', 'true');
+    });
+
+    overlay?.addEventListener('click', () => {
+      iosModal.classList.remove('show');
+      overlay.classList.remove('show');
+    });
+
+    // Detectar quando PWA é instalado
+    window.addEventListener('appinstalled', () => {
+      console.log('🎉 PWA instalado com sucesso!');
+      installBanner.classList.remove('show');
+      localStorage.setItem('pwa-installed', 'true');
+    });
+  </script>
 </body>
+
 </html>

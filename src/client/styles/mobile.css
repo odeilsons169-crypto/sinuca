@@ -1,0 +1,620 @@
+/* ================================================
+   🎱 SINUCA GAME - CSS Responsivo para Mobile
+   ================================================ */
+
+/* ================================================
+   BASE - Variáveis Mobile
+   ================================================ */
+:root {
+    --mobile-padding: 12px;
+    --mobile-header-height: 56px;
+    --mobile-bottom-nav-height: 60px;
+    --safe-area-top: env(safe-area-inset-top, 0px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-left: env(safe-area-inset-left, 0px);
+    --safe-area-right: env(safe-area-inset-right, 0px);
+}
+
+/* ================================================
+   MOBILE FIRST - Telas pequenas (até 768px)
+   ================================================ */
+@media screen and (max-width: 768px) {
+
+    /* Reset de scrolling para mobile */
+    html,
+    body {
+        overflow-x: hidden;
+        overscroll-behavior: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Layout principal */
+    .lobby {
+        flex-direction: column;
+        padding: 0;
+    }
+
+    /* Esconder sidebar em mobile */
+    .sidebar {
+        display: none !important;
+    }
+
+    /* Conteúdo principal ocupa tela toda */
+    .main-content {
+        width: 100%;
+        padding: var(--mobile-padding);
+        padding-top: calc(var(--mobile-header-height) + var(--safe-area-top) + 10px);
+        padding-bottom: calc(var(--mobile-bottom-nav-height) + var(--safe-area-bottom) + 20px);
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+
+    /* Header Mobile */
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--mobile-header-height);
+        padding: 0 var(--mobile-padding);
+        padding-top: var(--safe-area-top);
+        z-index: 1000;
+        background: rgba(15, 15, 26, 0.95);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .header-content {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .header-logo {
+        font-size: 1.1rem;
+    }
+
+    .header-logo span {
+        display: none;
+    }
+
+    .header-logo::before {
+        content: '🎱';
+        font-size: 1.5rem;
+    }
+
+    .header-stats {
+        gap: 8px;
+    }
+
+    .header-stat {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+
+    /* Navegação Bottom para Mobile */
+    .mobile-bottom-nav {
+        display: flex !important;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: var(--mobile-bottom-nav-height);
+        padding-bottom: var(--safe-area-bottom);
+        background: rgba(15, 15, 26, 0.98);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 1000;
+        justify-content: space-around;
+        align-items: center;
+    }
+
+    .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        color: #888;
+        text-decoration: none;
+        font-size: 0.65rem;
+        gap: 4px;
+        transition: all 0.2s;
+        cursor: pointer;
+        border: none;
+        background: none;
+    }
+
+    .mobile-nav-item.active {
+        color: var(--accent-green, #00ff88);
+    }
+
+    .mobile-nav-item-icon {
+        font-size: 1.3rem;
+    }
+
+    /* Cards */
+    .game-mode-card,
+    .room-card,
+    .ranking-item,
+    .tournament-card {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+
+    /* Grids responsivos */
+    .game-modes-grid,
+    .rooms-grid,
+    .tournament-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    /* Botões */
+    .btn {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+        width: 100%;
+    }
+
+    .btn-sm {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+
+    /* Modais */
+    .modal {
+        width: calc(100% - 24px);
+        max-width: none;
+        max-height: 85vh;
+        margin: 12px;
+        border-radius: 16px;
+    }
+
+    .modal-content {
+        padding: 16px;
+    }
+
+    /* Forms */
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px;
+        /* Previne zoom no iOS */
+        padding: 14px;
+    }
+
+    /* Tabelas */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        font-size: 0.85rem;
+    }
+
+    table th,
+    table td {
+        padding: 8px 6px;
+        white-space: nowrap;
+    }
+
+    /* Ranking */
+    .podium-container {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .podium-player {
+        width: 100%;
+        padding: 16px;
+    }
+
+    .podium-gold {
+        order: -1;
+    }
+
+    .ranking-list {
+        gap: 8px;
+    }
+
+    /* Profile */
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+    }
+
+    .profile-stats {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    /* Wallet */
+    .wallet-balance {
+        font-size: 2rem;
+    }
+
+    .wallet-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Admin - Esconder sidebar, mostrar menu hamburguer */
+    .admin-sidebar {
+        position: fixed;
+        left: -280px;
+        top: 0;
+        bottom: 0;
+        width: 280px;
+        z-index: 2000;
+        transition: left 0.3s ease;
+    }
+
+    .admin-sidebar.open {
+        left: 0;
+    }
+
+    .admin-content {
+        margin-left: 0;
+        padding: var(--mobile-padding);
+    }
+
+    .admin-menu-toggle {
+        display: block !important;
+    }
+
+    /* Torneios */
+    .bracket-container {
+        overflow-x: auto;
+        padding-bottom: 20px;
+    }
+
+    /* Landing Page */
+    .landing-hero {
+        padding: 40px var(--mobile-padding);
+        min-height: auto;
+    }
+
+    .landing-hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .landing-features {
+        grid-template-columns: 1fr;
+    }
+
+    /* Textos */
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.3rem;
+    }
+
+    h3 {
+        font-size: 1.1rem;
+    }
+
+    /* Espaçamentos */
+    .section {
+        padding: 16px 0;
+    }
+
+    .container {
+        padding: 0 var(--mobile-padding);
+    }
+}
+
+/* ================================================
+   GAME PAGE - Mesa de Sinuca Mobile
+   ================================================ */
+@media screen and (max-width: 768px) {
+    .game-container {
+        width: 100vw;
+        height: calc(100vh - var(--mobile-header-height) - var(--mobile-bottom-nav-height));
+        height: calc(100dvh - var(--mobile-header-height) - var(--mobile-bottom-nav-height));
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .game-canvas-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Canvas vai rotacionar se tela for muito estreita */
+    .game-canvas {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        touch-action: none;
+    }
+
+    /* HUD do jogo */
+    .game-hud {
+        position: fixed;
+        top: calc(var(--mobile-header-height) + var(--safe-area-top));
+        left: 0;
+        right: 0;
+        padding: 8px var(--mobile-padding);
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+        z-index: 100;
+    }
+
+    .game-hud-players {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.75rem;
+    }
+
+    .game-hud-player {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 20px;
+    }
+
+    .game-hud-player.active {
+        border: 2px solid var(--accent-green, #00ff88);
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.7;
+        }
+    }
+
+    .game-hud-player-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--bg-tertiary, #333);
+    }
+
+    /* Controles de força */
+    .power-slider {
+        position: fixed;
+        right: var(--mobile-padding);
+        top: 50%;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 200px;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 20px;
+        z-index: 100;
+        display: flex;
+        flex-direction: column-reverse;
+        overflow: hidden;
+    }
+
+    .power-slider-fill {
+        background: linear-gradient(0deg, #00ff88 0%, #ffc107 50%, #ff4444 100%);
+        width: 100%;
+        transition: height 0.1s;
+    }
+
+    /* Botão de tacada */
+    .shoot-button {
+        position: fixed;
+        bottom: calc(var(--mobile-bottom-nav-height) + var(--safe-area-bottom) + 20px);
+        right: var(--mobile-padding);
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent-green, #00ff88), #00d4ff);
+        border: none;
+        font-size: 2rem;
+        color: #000;
+        box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4);
+        z-index: 100;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .shoot-button:active {
+        transform: scale(0.95);
+    }
+
+    /* Menu de pausa */
+    .game-pause-menu {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        z-index: 2000;
+    }
+
+    /* Mensagens de jogo */
+    .game-message {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.9);
+        padding: 20px 40px;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        text-align: center;
+        z-index: 500;
+        animation: fadeInOut 2s ease-in-out;
+    }
+
+    @keyframes fadeInOut {
+
+        0%,
+        100% {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.8);
+        }
+
+        20%,
+        80% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+    }
+}
+
+/* ================================================
+   LANDSCAPE MODE - Modo paisagem
+   ================================================ */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+    .game-container {
+        height: 100vh;
+        height: 100dvh;
+    }
+
+    .mobile-bottom-nav {
+        display: none !important;
+    }
+
+    .header {
+        display: none !important;
+    }
+
+    .game-hud {
+        top: var(--safe-area-top);
+    }
+
+    .power-slider {
+        height: 150px;
+    }
+
+    .shoot-button {
+        bottom: 20px;
+    }
+}
+
+/* ================================================
+   TABLETS (768px - 1024px)
+   ================================================ */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .sidebar {
+        width: 60px;
+        padding: 12px 8px;
+    }
+
+    .sidebar-title,
+    .sidebar-item span:not(.sidebar-item-icon) {
+        display: none;
+    }
+
+    .sidebar-item {
+        justify-content: center;
+        padding: 12px;
+    }
+
+    .sidebar-item-icon {
+        margin: 0;
+        font-size: 1.3rem;
+    }
+
+    .main-content {
+        padding: 16px;
+    }
+
+    .game-modes-grid,
+    .rooms-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ================================================
+   TOUCH IMPROVEMENTS
+   ================================================ */
+@media (hover: none) and (pointer: coarse) {
+
+    /* Aumentar áreas de toque */
+    button,
+    a,
+    .clickable,
+    .btn,
+    input[type="checkbox"],
+    input[type="radio"] {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Remover hover effects em touch */
+    .btn:hover,
+    .card:hover,
+    .room-card:hover {
+        transform: none;
+    }
+
+    /* Active state para feedback tátil */
+    .btn:active,
+    .card:active {
+        transform: scale(0.98);
+        opacity: 0.9;
+    }
+}
+
+/* ================================================
+   DARK MODE IMPROVEMENTS
+   ================================================ */
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+    }
+}
+
+/* ================================================
+   REDUCED MOTION
+   ================================================ */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ================================================
+   PRINT
+   ================================================ */
+@media print {
+
+    .mobile-bottom-nav,
+    .header,
+    .sidebar,
+    .btn,
+    .modal {
+        display: none !important;
+    }
+}

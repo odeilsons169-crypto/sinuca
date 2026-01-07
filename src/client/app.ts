@@ -26,6 +26,7 @@ import { TournamentBracketPage } from './pages/TournamentBracketPage.js';
 import { gameStore } from './store/gameStore.js';
 import { api } from './services/api.js';
 import { toast } from './services/toast.js'; // Sistema de notificações
+import { renderMobileBottomNav, initMobileNavEvents, isMobile } from './components/MobileNav.js';
 
 type Page = 'landing' | 'login' | 'register' | 'lobby' | 'games' | 'room' | 'game' | 'ranking' | 'profile' | 'wallet' | 'admin' | 'terms' | 'privacy' | 'rules' | 'faq' | 'responsible' | 'game-detail' | 'maintenance' | 'error' | 'tournament-bracket';
 
@@ -403,7 +404,18 @@ class App {
     }
 
     app.innerHTML = content;
+
+    // Injetar navegação mobile em páginas internas (não em landing, login, register, game)
+    const pagesWithMobileNav: Page[] = ['lobby', 'games', 'ranking', 'profile', 'wallet', 'admin', 'room'];
+    if (pagesWithMobileNav.includes(this.currentPage) && isMobile()) {
+      const mobileNavHtml = renderMobileBottomNav(this.currentPage);
+      app.insertAdjacentHTML('beforeend', mobileNavHtml);
+    }
+
     this.bindEvents();
+
+    // Inicializar eventos do mobile nav
+    initMobileNavEvents(this);
 
     // Bind admin events se estiver na página admin
     if (this.currentPage === 'admin') {

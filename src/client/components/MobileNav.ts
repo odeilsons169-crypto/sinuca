@@ -1,71 +1,67 @@
 import { gameStore } from '../store/gameStore.js';
 
 /**
- * Componente de Menu Bottom para navegação mobile
+ * Renderiza a navegação bottom para mobile
+ * Esta função retorna o HTML do menu e deve ser inserida no final de cada página
  */
-export function MobileBottomNav(): string {
+export function renderMobileBottomNav(currentPage: string = 'lobby'): string {
     const state = gameStore.getState();
-    const currentPath = window.location.pathname;
+    const isAdmin = state.user && ['admin', 'super_admin', 'manager', 'employee'].includes(state.user.role || '');
 
-    // Definir itens do menu
     const navItems = [
-        { icon: '🏠', label: 'Início', path: '/lobby', page: 'lobby' },
-        { icon: '🎮', label: 'Jogar', path: '/games', page: 'games' },
-        { icon: '🏆', label: 'Ranking', path: '/ranking', page: 'ranking' },
-        { icon: '💰', label: 'Carteira', path: '/wallet', page: 'wallet' },
-        { icon: '👤', label: 'Perfil', path: '/profile', page: 'profile' },
+        { icon: '🏠', label: 'Início', page: 'lobby' },
+        { icon: '🎮', label: 'Jogar', page: 'games' },
+        { icon: '🏆', label: 'Ranking', page: 'ranking' },
+        { icon: '💰', label: 'Carteira', page: 'wallet' },
+        { icon: '👤', label: 'Perfil', page: 'profile' },
     ];
 
-    // Se for admin, mostrar item de admin
-    const isAdmin = state.user && ['admin', 'super_admin', 'manager', 'employee'].includes(state.user.role || '');
-    if (isAdmin) {
-        navItems.push({ icon: '⚙️', label: 'Admin', path: '/admin', page: 'admin' });
-    }
-
     return `
-    <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+    <!-- Navegação Bottom Mobile -->
+    <nav class="mobile-bottom-nav mobile-only" id="mobile-bottom-nav">
       ${navItems.map(item => `
-        <a href="${item.path}" 
-           class="mobile-nav-item ${currentPath === item.path ? 'active' : ''}"
-           data-navigate="${item.page}">
+        <button class="mobile-nav-item ${currentPage === item.page ? 'active' : ''}" data-page="${item.page}">
           <span class="mobile-nav-item-icon">${item.icon}</span>
           <span class="mobile-nav-item-label">${item.label}</span>
-        </a>
+        </button>
       `).join('')}
+      ${isAdmin ? `
+        <button class="mobile-nav-item ${currentPage === 'admin' ? 'active' : ''}" data-page="admin">
+          <span class="mobile-nav-item-icon">⚙️</span>
+          <span class="mobile-nav-item-label">Admin</span>
+        </button>
+      ` : ''}
     </nav>
   `;
 }
 
 /**
- * Componente de Header Mobile
+ * Renderiza o header mobile
  */
-export function MobileHeader(title?: string): string {
+export function renderMobileHeader(title?: string): string {
     const state = gameStore.getState();
+    const balance = state.balance ?? 0;
+    const credits = state.credits ?? 0;
+    const isUnlimited = state.isUnlimited ?? false;
 
     return `
-    <header class="header mobile-header">
+    <!-- Header Mobile -->
+    <header class="mobile-header mobile-only">
       <div class="header-content">
-        <div class="header-left">
-          <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Menu">
-            <span>☰</span>
-          </button>
-          <span class="header-logo">🎱</span>
-          ${title ? `<h1 class="mobile-header-title">${title}</h1>` : ''}
+        <div class="header-logo">
+          <span class="header-logo-icon">🎱</span>
+          ${title ? `<span class="header-title-text">${title}</span>` : '<span class="header-logo-text">Sinuca</span>'}
         </div>
         
         <div class="header-stats">
           <div class="header-stat">
             <span class="stat-icon">🪙</span>
-            <span class="stat-value">${state.credits ?? 0}</span>
+            <span class="stat-value">${isUnlimited ? '∞' : credits}</span>
           </div>
           <div class="header-stat">
             <span class="stat-icon">💰</span>
-            <span class="stat-value">R$ ${(state.wallet ?? 0).toFixed(2)}</span>
+            <span class="stat-value">R$ ${balance.toFixed(2)}</span>
           </div>
-        </div>
-        
-        <div class="header-user">
-          <div class="user-avatar-small" style="background-image: url('${state.user?.avatar_url || '/icons/icon-72x72.png'}')"></div>
         </div>
       </div>
     </header>
@@ -73,40 +69,45 @@ export function MobileHeader(title?: string): string {
 }
 
 /**
- * Inicializar eventos de navegação mobile
+ * Inicializa os eventos de navegação mobile
+ * Deve ser chamado após renderizar a página
  */
-export function initMobileNavigation(): void {
-    // Toggle do menu lateral (se existir)
-    const menuToggle = document.getElementById('mobile-menu-toggle');
-    const sidebar = document.querySelector('.admin-sidebar, .sidebar');
+export function initMobileNavEvents(app: any): void {
+    // Navegação bottom
+    document.querySelectorAll('.mobile-nav-item[data-page]').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = (item as HTMLElement).dataset.page;
+            if (page && app) {
+                // Feedback tátil
+                if (navigator.vibrate) {
+                    navigator.vibrate(10);
+                }
+                app.navigate(page);
+            }
+        });
+    });
+
+    // Toggle do menu lateral (admin)
+    const menuToggle = document.querySelector('.admin-menu-toggle');
+    const sidebar = document.querySelector('.admin-sidebar');
+    const overlay = document.querySelector('.admin-sidebar-overlay');
 
     if (menuToggle && sidebar) {
         menuToggle.addEventListener('click', () => {
             sidebar.classList.toggle('open');
+            overlay?.classList.toggle('show');
         });
 
-        // Fechar ao clicar fora
-        document.addEventListener('click', (e) => {
-            if (!sidebar.contains(e.target as Node) && !menuToggle.contains(e.target as Node)) {
-                sidebar.classList.remove('open');
-            }
+        overlay?.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
         });
     }
-
-    // Navegação do bottom nav
-    document.querySelectorAll('.mobile-nav-item').forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            const page = (item as HTMLElement).dataset.navigate;
-            if (page && (window as any).app) {
-                (window as any).app.navigate(page);
-            }
-        });
-    });
 }
 
 /**
- * Detectar se está em modo mobile
+ * Detecta se está em modo mobile
  */
 export function isMobile(): boolean {
     return window.innerWidth <= 768 ||
@@ -114,7 +115,7 @@ export function isMobile(): boolean {
 }
 
 /**
- * Detectar se está em modo PWA (standalone)
+ * Detecta se está em modo PWA (standalone)
  */
 export function isPWA(): boolean {
     return window.matchMedia('(display-mode: standalone)').matches ||
@@ -122,10 +123,19 @@ export function isPWA(): boolean {
 }
 
 /**
- * Detectar orientação
+ * Detecta orientação
  */
 export function isLandscape(): boolean {
     return window.innerWidth > window.innerHeight;
+}
+
+/**
+ * Vibrar dispositivo (feedback tátil)
+ */
+export function vibrate(pattern: number | number[] = 50): void {
+    if (navigator.vibrate) {
+        navigator.vibrate(pattern);
+    }
 }
 
 /**
@@ -134,7 +144,6 @@ export function isLandscape(): boolean {
 export function requestLandscape(): void {
     if (screen.orientation && (screen.orientation as any).lock) {
         (screen.orientation as any).lock('landscape').catch(() => {
-            // Navegador não suporta ou usuário negou
             console.log('Não foi possível bloquear orientação');
         });
     }
@@ -146,15 +155,6 @@ export function requestLandscape(): void {
 export function unlockOrientation(): void {
     if (screen.orientation && screen.orientation.unlock) {
         screen.orientation.unlock();
-    }
-}
-
-/**
- * Vibrar dispositivo (feedback tátil)
- */
-export function vibrate(pattern: number | number[] = 50): void {
-    if (navigator.vibrate) {
-        navigator.vibrate(pattern);
     }
 }
 

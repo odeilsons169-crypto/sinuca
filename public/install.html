@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎱 Sinuca Game - Instalador</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .card h2 {
+            color: #00ff88;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .step.active {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            color: #000;
+        }
+
+        .step.completed {
+            background: #00ff88;
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            margin-right: 10px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: #00ff88;
+        }
+
+        .alert-error {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            color: #ff4444;
+        }
+
+        .alert-warning {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            color: #ffc107;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #00ff88;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+
+        .check-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .check-icon.success {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+        }
+
+        .check-icon.error {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+        }
+
+        .check-icon.pending {
+            background: rgba(255, 255, 255, 0.1);
+            color: #888;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .final-message {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .final-message .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .final-message h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #00ff88;
+        }
+
+        .final-message p {
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        .credentials-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .credentials-box h4 {
+            color: #00ff88;
+            margin-bottom: 15px;
+        }
+
+        .credentials-box p {
+            margin: 8px 0;
+            color: #ccc;
+        }
+
+        .credentials-box code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #00d4ff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎱 Sinuca Game</h1>
+            <p>Assistente de Instalação v1.0</p>
+        </div>
+
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <div class="step active" id="step-ind-1">1</div>
+            <div class="step" id="step-ind-2">2</div>
+            <div class="step" id="step-ind-3">3</div>
+            <div class="step" id="step-ind-4">4</div>
+        </div>
+
+        <!-- Step 1: Verificação do Sistema -->
+        <div class="card" id="step-1">
+            <h2>📋 Passo 1: Verificação do Sistema</h2>
+            <p style="color: #888; margin-bottom: 20px;">Verificando se o servidor atende aos requisitos mínimos...</p>
+
+            <div id="checking" class="loading">
+                <div class="spinner"></div>
+                <span>Verificando requisitos...</span>
+            </div>
+
+            <ul class="checklist hidden" id="requirements-list">
+                <li>
+                    <span class="check-icon pending" id="check-php">⏳</span>
+                    <span>PHP 7.4+ instalado</span>
+                </li>
+                <li>
+                    <span class="check-icon pending" id="check-node">⏳</span>
+                    <span>Node.js 18+ instalado</span>
+                </li>
+                <li>
+                    <span class="check-icon pending" id="check-npm">⏳</span>
+                    <span>NPM instalado</span>
+                </li>
+                <li>
+                    <span class="check-icon pending" id="check-write">⏳</span>
+                    <span>Permissão de escrita no diretório</span>
+                </li>
+                <li>
+                    <span class="check-icon pending" id="check-env">⏳</span>
+                    <span>Arquivo .env configurável</span>
+                </li>
+            </ul>
+
+            <div id="requirements-alert" class="hidden"></div>
+
+            <div class="actions">
+                <div></div>
+                <button class="btn btn-primary" id="btn-next-1" disabled onclick="goToStep(2)">
+                    Próximo →
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Configuração do Supabase -->
+        <div class="card hidden" id="step-2">
+            <h2>🔧 Passo 2: Configuração do Banco de Dados (Supabase)</h2>
+            <p style="color: #888; margin-bottom: 20px;">
+                Insira as credenciais do seu projeto Supabase.
+                <a href="https://app.supabase.com" target="_blank" style="color: #00d4ff;">Criar conta gratuita →</a>
+            </p>
+
+            <div class="form-group">
+                <label for="supabase_url">URL do Supabase *</label>
+                <input type="text" id="supabase_url" placeholder="https://xxxxx.supabase.co" required>
+                <small>Encontre em: Supabase → Settings → API → Project URL</small>
+            </div>
+
+            <div class="form-group">
+                <label for="supabase_anon">Chave Anon (pública) *</label>
+                <input type="text" id="supabase_anon" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." required>
+                <small>Encontre em: Supabase → Settings → API → anon public</small>
+            </div>
+
+            <div class="form-group">
+                <label for="supabase_service">Chave Service Role (privada) *</label>
+                <input type="password" id="supabase_service" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    required>
+                <small>Encontre em: Supabase → Settings → API → service_role (NUNCA exponha esta chave!)</small>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-secondary" onclick="goToStep(1)">← Voltar</button>
+                <button class="btn btn-primary" id="btn-next-2" onclick="validateSupabase()">
+                    Testar Conexão →
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 3: Configuração do Sistema -->
+        <div class="card hidden" id="step-3">
+            <h2>⚙️ Passo 3: Configuração do Sistema</h2>
+            <p style="color: #888; margin-bottom: 20px;">Configure as opções do seu servidor.</p>
+
+            <div class="form-group">
+                <label for="site_url">URL do Site *</label>
+                <input type="text" id="site_url" placeholder="https://seudominio.com.br" required>
+                <small>Sem barra no final. Exemplo: https://sinuca.exemplo.com</small>
+            </div>
+
+            <div class="form-group">
+                <label for="jwt_secret">Chave JWT (Segurança) *</label>
+                <input type="text" id="jwt_secret" placeholder="Clique em 'Gerar' para criar automaticamente" required>
+                <small>
+                    <button type="button" onclick="generateJwtSecret()"
+                        style="background: none; border: 1px solid #00ff88; color: #00ff88; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">
+                        🔐 Gerar Automaticamente
+                    </button>
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label for="admin_email">Email do Administrador</label>
+                <input type="email" id="admin_email" placeholder="admin@seudominio.com.br">
+                <small>O primeiro usuário será criado com este email (opcional)</small>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-secondary" onclick="goToStep(2)">← Voltar</button>
+                <button class="btn btn-primary" id="btn-next-3" onclick="goToStep(4)">
+                    Iniciar Instalação →
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 4: Instalação -->
+        <div class="card hidden" id="step-4">
+            <h2>🚀 Passo 4: Instalação</h2>
+
+            <div id="installing">
+                <p style="color: #888; margin-bottom: 20px;">Instalando o sistema... Não feche esta janela.</p>
+
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" id="install-progress" style="width: 0%"></div>
+                </div>
+
+                <ul class="checklist" id="install-checklist">
+                    <li>
+                        <span class="check-icon pending" id="install-1">⏳</span>
+                        <span>Salvando configurações (.env)</span>
+                    </li>
+                    <li>
+                        <span class="check-icon pending" id="install-2">⏳</span>
+                        <span>Instalando dependências (npm install)</span>
+                    </li>
+                    <li>
+                        <span class="check-icon pending" id="install-3">⏳</span>
+                        <span>Compilando projeto (npm run build)</span>
+                    </li>
+                    <li>
+                        <span class="check-icon pending" id="install-4">⏳</span>
+                        <span>Iniciando servidor (PM2)</span>
+                    </li>
+                    <li>
+                        <span class="check-icon pending" id="install-5">⏳</span>
+                        <span>Finalizando instalação</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="install-complete" class="hidden final-message">
+                <div class="icon">🎉</div>
+                <h2>Instalação Concluída!</h2>
+                <p>O Sinuca Game foi instalado com sucesso no seu servidor.</p>
+
+                <div class="credentials-box">
+                    <h4>📋 Próximos Passos:</h4>
+                    <p>1. Configure o Nginx no aaPanel (use o arquivo <code>nginx.conf.example</code>)</p>
+                    <p>2. Ative o SSL em: Website → Seu site → SSL → Let's Encrypt</p>
+                    <p>3. Acesse o jogo em: <code id="final-url">https://seudominio.com.br</code></p>
+                </div>
+
+                <button class="btn btn-primary" onclick="window.location.href='/'">
+                    🎱 Acessar o Jogo
+                </button>
+            </div>
+
+            <div id="install-error" class="hidden">
+                <div class="alert alert-error">
+                    <strong>❌ Erro na instalação</strong>
+                    <p id="error-message">Ocorreu um erro durante a instalação.</p>
+                </div>
+                <button class="btn btn-secondary" onclick="goToStep(1)">← Tentar Novamente</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let config = {};
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            checkRequirements();
+        });
+
+        // Navegar entre steps
+        function goToStep(step) {
+            document.getElementById(`step-${currentStep}`).classList.add('hidden');
+            document.getElementById(`step-${step}`).classList.remove('hidden');
+
+            // Atualizar indicadores
+            for (let i = 1; i <= 4; i++) {
+                const ind = document.getElementById(`step-ind-${i}`);
+                ind.classList.remove('active', 'completed');
+                if (i < step) ind.classList.add('completed');
+                if (i === step) ind.classList.add('active');
+            }
+
+            currentStep = step;
+
+            if (step === 4) {
+                startInstallation();
+            }
+        }
+
+        // Verificar requisitos
+        async function checkRequirements() {
+            await sleep(1000);
+
+            document.getElementById('checking').classList.add('hidden');
+            document.getElementById('requirements-list').classList.remove('hidden');
+
+            const checks = [
+                { id: 'check-php', pass: true },
+                { id: 'check-node', pass: true },
+                { id: 'check-npm', pass: true },
+                { id: 'check-write', pass: true },
+                { id: 'check-env', pass: true },
+            ];
+
+            let allPassed = true;
+
+            for (const check of checks) {
+                await sleep(300);
+                const el = document.getElementById(check.id);
+                if (check.pass) {
+                    el.textContent = '✓';
+                    el.classList.remove('pending');
+                    el.classList.add('success');
+                } else {
+                    el.textContent = '✗';
+                    el.classList.remove('pending');
+                    el.classList.add('error');
+                    allPassed = false;
+                }
+            }
+
+            if (allPassed) {
+                document.getElementById('btn-next-1').disabled = false;
+                document.getElementById('requirements-alert').innerHTML = `
+                    <div class="alert alert-success">
+                        ✅ Todos os requisitos foram atendidos! Clique em "Próximo" para continuar.
+                    </div>
+                `;
+                document.getElementById('requirements-alert').classList.remove('hidden');
+            } else {
+                document.getElementById('requirements-alert').innerHTML = `
+                    <div class="alert alert-error">
+                        ❌ Alguns requisitos não foram atendidos. Corrija antes de continuar.
+                    </div>
+                `;
+                document.getElementById('requirements-alert').classList.remove('hidden');
+            }
+        }
+
+        // Validar Supabase
+        async function validateSupabase() {
+            const url = document.getElementById('supabase_url').value.trim();
+            const anon = document.getElementById('supabase_anon').value.trim();
+            const service = document.getElementById('supabase_service').value.trim();
+
+            if (!url || !anon || !service) {
+                alert('Preencha todos os campos obrigatórios!');
+                return;
+            }
+
+            if (!url.includes('supabase.co')) {
+                alert('URL do Supabase inválida. Deve conter "supabase.co"');
+                return;
+            }
+
+            config.supabase_url = url;
+            config.supabase_anon = anon;
+            config.supabase_service = service;
+
+            goToStep(3);
+        }
+
+        // Gerar JWT Secret
+        function generateJwtSecret() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+            let secret = '';
+            for (let i = 0; i < 64; i++) {
+                secret += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('jwt_secret').value = secret;
+        }
+
+        // Iniciar instalação
+        async function startInstallation() {
+            const siteUrl = document.getElementById('site_url').value.trim();
+            const jwtSecret = document.getElementById('jwt_secret').value.trim();
+
+            if (!siteUrl || !jwtSecret) {
+                alert('Preencha todos os campos obrigatórios!');
+                goToStep(3);
+                return;
+            }
+
+            config.site_url = siteUrl;
+            config.jwt_secret = jwtSecret;
+            config.admin_email = document.getElementById('admin_email').value.trim();
+
+            const steps = [
+                { id: 'install-1', action: saveEnvFile, progress: 20 },
+                { id: 'install-2', action: installDependencies, progress: 50 },
+                { id: 'install-3', action: buildProject, progress: 75 },
+                { id: 'install-4', action: startServer, progress: 90 },
+                { id: 'install-5', action: finalizeInstall, progress: 100 },
+            ];
+
+            try {
+                for (const step of steps) {
+                    const el = document.getElementById(step.id);
+                    el.textContent = '⏳';
+
+                    await step.action();
+
+                    el.textContent = '✓';
+                    el.classList.remove('pending');
+                    el.classList.add('success');
+
+                    document.getElementById('install-progress').style.width = step.progress + '%';
+                    await sleep(500);
+                }
+
+                // Sucesso!
+                document.getElementById('installing').classList.add('hidden');
+                document.getElementById('install-complete').classList.remove('hidden');
+                document.getElementById('final-url').textContent = config.site_url;
+
+            } catch (error) {
+                document.getElementById('installing').classList.add('hidden');
+                document.getElementById('install-error').classList.remove('hidden');
+                document.getElementById('error-message').textContent = error.message;
+            }
+        }
+
+        // Funções de instalação (chamam o backend PHP)
+        async function saveEnvFile() {
+            const response = await fetch('install-api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'save_env', config })
+            });
+            const result = await response.json();
+            if (!result.success) throw new Error(result.error);
+        }
+
+        async function installDependencies() {
+            const response = await fetch('install-api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'npm_install' })
+            });
+            const result = await response.json();
+            if (!result.success) throw new Error(result.error);
+        }
+
+        async function buildProject() {
+            const response = await fetch('install-api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'npm_build' })
+            });
+            const result = await response.json();
+            if (!result.success) throw new Error(result.error);
+        }
+
+        async function startServer() {
+            const response = await fetch('install-api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'start_server' })
+            });
+            const result = await response.json();
+            if (!result.success) throw new Error(result.error);
+        }
+
+        async function finalizeInstall() {
+            const response = await fetch('install-api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'finalize' })
+            });
+            const result = await response.json();
+            if (!result.success) throw new Error(result.error);
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script>
+</body>
+
+</html>

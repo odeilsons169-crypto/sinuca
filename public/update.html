@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔄 Sinuca Game - Atualizador</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .card h2 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .version-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .version-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .version-box.current {
+            border: 2px solid #ffc107;
+        }
+
+        .version-box.new {
+            border: 2px solid #00ff88;
+        }
+
+        .version-label {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .version-number {
+            font-size: 2rem;
+            font-weight: 900;
+        }
+
+        .version-box.current .version-number {
+            color: #ffc107;
+        }
+
+        .version-box.new .version-number {
+            color: #00ff88;
+        }
+
+        .changelog {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .changelog h4 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+        }
+
+        .changelog ul {
+            list-style: none;
+        }
+
+        .changelog li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .changelog li:last-child {
+            border-bottom: none;
+        }
+
+        .tag {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .tag-feature {
+            background: #00ff88;
+            color: #000;
+        }
+
+        .tag-fix {
+            background: #ff6b6b;
+            color: #fff;
+        }
+
+        .tag-improve {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+            color: #fff;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .progress-container {
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            transition: width 0.5s ease;
+            border-radius: 6px;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .check-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .check-icon.pending {
+            background: rgba(255, 255, 255, 0.1);
+            color: #888;
+        }
+
+        .check-icon.running {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+            animation: pulse 1s infinite;
+        }
+
+        .check-icon.success {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+        }
+
+        .check-icon.error {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .alert-success {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: #00ff88;
+        }
+
+        .alert-error {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            color: #ff4444;
+        }
+
+        .alert-warning {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            color: #ffc107;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .backup-warning {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .backup-warning h4 {
+            color: #ffc107;
+            margin-bottom: 10px;
+        }
+
+        .backup-warning p {
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .success-message .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .success-message h2 {
+            color: #00ff88;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔄 Atualizador</h1>
+            <p>Sinuca Game - Sistema de Atualização</p>
+        </div>
+
+        <!-- Verificação de Autenticação -->
+        <div class="card" id="auth-section">
+            <h2>🔐 Autenticação</h2>
+            <p style="color: #888; margin-bottom: 20px;">
+                Digite a chave de administrador para acessar o atualizador.
+            </p>
+
+            <div class="form-group">
+                <label for="admin-key">Chave de Admin</label>
+                <input type="password" id="admin-key" placeholder="Digite a chave de setup do .env">
+            </div>
+
+            <button class="btn btn-primary" onclick="authenticate()">
+                🔓 Acessar Atualizador
+            </button>
+
+            <div id="auth-error" class="alert alert-error hidden">
+                ❌ Chave inválida. Verifique o ADMIN_SETUP_KEY no arquivo .env
+            </div>
+        </div>
+
+        <!-- Painel Principal (após autenticação) -->
+        <div id="main-panel" class="hidden">
+            <!-- Status Atual -->
+            <div class="card">
+                <h2>📊 Status do Sistema</h2>
+
+                <div class="version-info">
+                    <div class="version-box current">
+                        <div class="version-label">Versão Atual</div>
+                        <div class="version-number" id="current-version">1.0.0</div>
+                    </div>
+                    <div class="version-box new">
+                        <div class="version-label">Última Versão</div>
+                        <div class="version-number" id="latest-version">--</div>
+                    </div>
+                </div>
+
+                <div id="update-available" class="alert alert-success hidden">
+                    ✨ Nova versão disponível! Clique em "Atualizar" para instalar.
+                </div>
+
+                <div id="up-to-date" class="alert alert-success hidden">
+                    ✅ Seu sistema está atualizado!
+                </div>
+
+                <button class="btn btn-primary" id="check-updates-btn" onclick="checkForUpdates()">
+                    🔍 Verificar Atualizações
+                </button>
+            </div>
+
+            <!-- Changelog -->
+            <div class="card hidden" id="changelog-section">
+                <h2>📝 O que há de novo</h2>
+
+                <div class="changelog" id="changelog-content">
+                    <!-- Preenchido dinamicamente -->
+                </div>
+            </div>
+
+            <!-- Processo de Atualização -->
+            <div class="card hidden" id="update-section">
+                <h2>⚙️ Atualizar Sistema</h2>
+
+                <div class="backup-warning">
+                    <h4>⚠️ Importante</h4>
+                    <p>Antes de atualizar, certifique-se de que possui backup do banco de dados.
+                        O sistema será reiniciado automaticamente após a atualização.</p>
+                </div>
+
+                <div id="update-ready">
+                    <button class="btn btn-primary" onclick="startUpdate()">
+                        🚀 Iniciar Atualização
+                    </button>
+                </div>
+
+                <div id="update-progress" class="hidden">
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="progress-text">Preparando atualização...</div>
+                    </div>
+
+                    <ul class="checklist" id="update-checklist">
+                        <li>
+                            <span class="check-icon pending" id="step-1">⏳</span>
+                            <span>Fazendo backup do sistema</span>
+                        </li>
+                        <li>
+                            <span class="check-icon pending" id="step-2">⏳</span>
+                            <span>Baixando atualizações do Git</span>
+                        </li>
+                        <li>
+                            <span class="check-icon pending" id="step-3">⏳</span>
+                            <span>Atualizando dependências</span>
+                        </li>
+                        <li>
+                            <span class="check-icon pending" id="step-4">⏳</span>
+                            <span>Compilando nova versão</span>
+                        </li>
+                        <li>
+                            <span class="check-icon pending" id="step-5">⏳</span>
+                            <span>Reiniciando servidor</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div id="update-success" class="hidden success-message">
+                    <div class="icon">🎉</div>
+                    <h2>Atualização Concluída!</h2>
+                    <p style="color: #888; margin-bottom: 20px;">O sistema foi atualizado com sucesso.</p>
+                    <button class="btn btn-primary" onclick="window.location.reload()">
+                        🔄 Recarregar Página
+                    </button>
+                </div>
+
+                <div id="update-error" class="hidden">
+                    <div class="alert alert-error">
+                        <strong>❌ Erro na atualização</strong>
+                        <p id="error-message">Ocorreu um erro durante a atualização.</p>
+                    </div>
+                    <button class="btn btn-danger" onclick="rollback()">
+                        ↩️ Restaurar Backup
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sincronização Manual -->
+            <div class="card">
+                <h2>🔗 Sincronização Git</h2>
+                <p style="color: #888; margin-bottom: 20px;">
+                    Sincronize manualmente com o repositório de desenvolvimento.
+                </p>
+
+                <button class="btn btn-primary" onclick="gitPull()" style="margin-bottom: 10px;">
+                    📥 Git Pull (Baixar Atualizações)
+                </button>
+
+                <button class="btn btn-danger" onclick="forceUpdate()">
+                    ⚡ Forçar Atualização Completa
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let authKey = '';
+
+        async function authenticate() {
+            authKey = document.getElementById('admin-key').value;
+
+            const response = await fetch('update-api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'authenticate', key: authKey })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                document.getElementById('auth-section').classList.add('hidden');
+                document.getElementById('main-panel').classList.remove('hidden');
+                document.getElementById('current-version').textContent = result.currentVersion || '1.0.0';
+            } else {
+                document.getElementById('auth-error').classList.remove('hidden');
+            }
+        }
+
+        async function checkForUpdates() {
+            const btn = document.getElementById('check-updates-btn');
+            btn.disabled = true;
+            btn.textContent = '🔍 Verificando...';
+
+            const response = await fetch('update-api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'check_updates', key: authKey })
+            });
+
+            const result = await response.json();
+
+            btn.disabled = false;
+            btn.textContent = '🔍 Verificar Atualizações';
+
+            if (result.hasUpdates) {
+                document.getElementById('latest-version').textContent = result.latestVersion;
+                document.getElementById('update-available').classList.remove('hidden');
+                document.getElementById('up-to-date').classList.add('hidden');
+                document.getElementById('changelog-section').classList.remove('hidden');
+                document.getElementById('update-section').classList.remove('hidden');
+
+                // Renderizar changelog
+                renderChangelog(result.changelog || []);
+            } else {
+                document.getElementById('latest-version').textContent = result.currentVersion;
+                document.getElementById('up-to-date').classList.remove('hidden');
+                document.getElementById('update-available').classList.add('hidden');
+            }
+        }
+
+        function renderChangelog(changes) {
+            const container = document.getElementById('changelog-content');
+            container.innerHTML = '<h4>Changelog</h4><ul>' + changes.map(c => {
+                let tagClass = 'tag-improve';
+                if (c.type === 'feature') tagClass = 'tag-feature';
+                if (c.type === 'fix') tagClass = 'tag-fix';
+                return `<li><span class="tag ${tagClass}">${c.type}</span> ${c.message}</li>`;
+            }).join('') + '</ul>';
+        }
+
+        async function startUpdate() {
+            document.getElementById('update-ready').classList.add('hidden');
+            document.getElementById('update-progress').classList.remove('hidden');
+
+            const steps = [
+                { id: 'step-1', action: 'backup' },
+                { id: 'step-2', action: 'git_pull' },
+                { id: 'step-3', action: 'npm_install' },
+                { id: 'step-4', action: 'build' },
+                { id: 'step-5', action: 'restart' },
+            ];
+
+            try {
+                for (let i = 0; i < steps.length; i++) {
+                    const step = steps[i];
+                    const el = document.getElementById(step.id);
+                    el.textContent = '⏳';
+                    el.classList.remove('pending');
+                    el.classList.add('running');
+
+                    document.getElementById('progress-fill').style.width = ((i / steps.length) * 100) + '%';
+                    document.getElementById('progress-text').textContent = `Passo ${i + 1} de ${steps.length}...`;
+
+                    const response = await fetch('update-api.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: step.action, key: authKey })
+                    });
+
+                    const result = await response.json();
+
+                    if (!result.success) {
+                        throw new Error(result.error || 'Erro desconhecido');
+                    }
+
+                    el.textContent = '✓';
+                    el.classList.remove('running');
+                    el.classList.add('success');
+                }
+
+                document.getElementById('progress-fill').style.width = '100%';
+                document.getElementById('progress-text').textContent = 'Atualização concluída!';
+
+                setTimeout(() => {
+                    document.getElementById('update-progress').classList.add('hidden');
+                    document.getElementById('update-success').classList.remove('hidden');
+                }, 1000);
+
+            } catch (error) {
+                document.getElementById('update-progress').classList.add('hidden');
+                document.getElementById('update-error').classList.remove('hidden');
+                document.getElementById('error-message').textContent = error.message;
+            }
+        }
+
+        async function gitPull() {
+            if (!confirm('Isso vai baixar as últimas atualizações do Git. Continuar?')) return;
+
+            const response = await fetch('update-api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'git_pull', key: authKey })
+            });
+
+            const result = await response.json();
+            alert(result.success ? '✅ Git pull concluído!' : '❌ Erro: ' + result.error);
+        }
+
+        async function forceUpdate() {
+            if (!confirm('⚠️ ATENÇÃO: Isso vai forçar uma atualização completa, podendo sobrescrever alterações locais. Continuar?')) return;
+
+            startUpdate();
+        }
+
+        async function rollback() {
+            if (!confirm('Restaurar o backup anterior? O sistema voltará ao estado antes da atualização.')) return;
+
+            const response = await fetch('update-api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'rollback', key: authKey })
+            });
+
+            const result = await response.json();
+            alert(result.success ? '✅ Backup restaurado!' : '❌ Erro: ' + result.error);
+            window.location.reload();
+        }
+    </script>
+</body>
+
+</html>

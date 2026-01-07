@@ -1,0 +1,43 @@
+{
+  "name": "sinuca-online",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/server/index.js",
+  "scripts": {
+    "dev": "vite",
+    "dev:server": "tsx watch src/server/index.ts",
+    "build": "vite build && tsc",
+    "start": "node dist/server/index.js",
+    "prod": "npm run build && npm run start",
+    "build-deploy": "node scripts/prepare-deploy.js",
+    "dev:all": "concurrently \"npm run dev:server\" \"npm run dev\""
+  },
+  "keywords": [
+    "sinuca",
+    "game",
+    "online",
+    "billiards"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "Plataforma de sinuca online com apostas e ranking",
+  "dependencies": {
+    "@fastify/cors": "^11.2.0",
+    "@fastify/multipart": "^9.3.0",
+    "@fastify/static": "^9.0.0",
+    "@supabase/supabase-js": "^2.89.0",
+    "@types/three": "^0.182.0",
+    "dotenv": "^17.2.3",
+    "fastify": "^5.6.2",
+    "phaser": "^3.90.0",
+    "three": "^0.182.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.3",
+    "concurrently": "^9.2.1",
+    "pg": "^8.16.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0"
+  }
+}

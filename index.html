@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0f0f1a">
+  <meta name="format-detection" content="telephone=no">
+  <title>🎱 Sinuca Online - Jogue Agora!</title>
+  
+  <!-- SEO & Social Sharing -->
+  <meta name="description" content="Jogue Sinuca Online contra amigos ou IA! Mesas realistas, física precisa e modo aposta. Cadastre-se e ganhe créditos.">
+  <meta property="og:title" content="🎱 Sinuca Online - Desafie seus amigos!">
+  <meta property="og:description" content="A melhor experiência de Sinuca no navegador. Modos 8-Ball, 9-Ball (Brasileira) e Aposta.">
+  <meta property="og:image" content="https://placehold.co/1200x630/1a1a24/42dc8e?text=Sinuca+Online">
+  <meta property="og:url" content="/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <!-- Performance & Preload -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  
+  <style>
+    /* Critical CSS - Prevent FOUC */
+    html, body { 
+      margin: 0; 
+      padding: 0; 
+      background: #0f0f1a; 
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      touch-action: manipulation;
+    }
+    #app { min-height: 100vh; min-height: 100dvh; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module" src="./src/client/app.ts"></script>
+</body>
+</html>

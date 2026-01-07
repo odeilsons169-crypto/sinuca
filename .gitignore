@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+*.log
+.DS_Store
+coverage/
+.turbo/
+
+# Certificados de pagamento (NUNCA commitar)
+certificates/*.p12
+certificates/*.pem
+!certificates/.gitkeep

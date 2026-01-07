@@ -1,0 +1,153 @@
+# ================================================
+# 🎱 SINUCA GAME - Configuração Nginx para aaPanel
+# ================================================
+# 
+# INSTRUÇÕES:
+# 1. No aaPanel, vá em: Website → Seu site → Config
+# 2. Copie TODO o conteúdo abaixo
+# 3. Substitua "seudominio.com.br" pelo seu domínio real
+# 4. Clique em Salvar
+# 5. Ative o SSL em: Website → Seu site → SSL → Let's Encrypt
+#
+# ================================================
+
+server {
+    listen 80;
+    listen [::]:80;
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    
+    # ALTERE PARA O SEU DOMÍNIO
+    server_name seudominio.com.br www.seudominio.com.br;
+    
+    # ================================================
+    # SSL - O aaPanel vai preencher automaticamente
+    # após você ativar o Let's Encrypt
+    # ================================================
+    #ssl_certificate    /www/server/panel/vhost/cert/seudominio.com.br/fullchain.pem;
+    #ssl_certificate_key    /www/server/panel/vhost/cert/seudominio.com.br/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+
+    # Forçar HTTPS (descomente após ativar SSL)
+    #if ($server_port !~ 443) {
+    #    rewrite ^(/.*)$ https://$host$1 permanent;
+    #}
+
+    # ================================================
+    # Diretório raiz - Frontend compilado
+    # ================================================
+    # ALTERE o caminho se necessário
+    root /www/wwwroot/sinuca/dist/client;
+    index index.html;
+
+    # ================================================
+    # Gzip - Compressão para melhor performance
+    # ================================================
+    gzip on;
+    gzip_min_length 1k;
+    gzip_buffers 4 16k;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/javascript application/json application/javascript application/xml;
+    gzip_vary on;
+    gzip_proxied any;
+
+    # ================================================
+    # Segurança - Headers
+    # ================================================
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    # ================================================
+    # Cache para arquivos estáticos
+    # ================================================
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # ================================================
+    # Frontend - Single Page Application
+    # ================================================
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # ================================================
+    # API Backend - Proxy para Node.js
+    # IMPORTANTE: Todas as chamadas /api vão para o Node
+    # ================================================
+    location /api {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 86400s;
+        proxy_send_timeout 86400s;
+    }
+
+    # ================================================
+    # WebSocket - Jogo em tempo real
+    # ================================================
+    location /socket.io {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 86400s;
+        proxy_send_timeout 86400s;
+    }
+
+    # ================================================
+    # Health Check - Verificação de saúde
+    # ================================================
+    location /health {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+    }
+
+    # ================================================
+    # Uploads - Avatares e arquivos do usuário
+    # ================================================
+    location /uploads {
+        alias /www/wwwroot/sinuca/uploads;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # ================================================
+    # Bloquear acesso a arquivos sensíveis
+    # ================================================
+    location ~ /\.(env|git|htaccess) {
+        deny all;
+        return 404;
+    }
+
+    location ~ /(node_modules|src)/ {
+        deny all;
+        return 404;
+    }
+
+    # ================================================
+    # Logs
+    # ================================================
+    access_log /www/wwwlogs/sinuca.access.log;
+    error_log /www/wwwlogs/sinuca.error.log;
+}

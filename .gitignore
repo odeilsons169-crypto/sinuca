@@ -10,3 +10,7 @@ coverage/
 certificates/*.p12
 certificates/*.pem
 !certificates/.gitkeep
+
+# Logs de produção
+logs/*.log
+!logs/.gitkeep

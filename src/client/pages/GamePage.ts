@@ -446,6 +446,30 @@ export function GamePage(app: any, data: any): string {
   const player2Name = isAI ? '🤖 CPU' : (roomData.guest?.username || roomData.player2?.username || 'Jogador 2');
   const modeLabel = mode === '9ball' ? '🔴🔵 Modo 4x4' : '🎱 Modo 8 Bolas';
 
+  // Detectar mobile e preparar modo paisagem
+  const isMobileDevice = window.innerWidth <= 900 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+  // Adicionar classe ao body para indicar jogo ativo (esconde nav mobile)
+  setTimeout(() => {
+    document.body.classList.add('game-active');
+
+    // Tentar forçar modo paisagem em mobile
+    if (isMobileDevice && screen.orientation && (screen.orientation as any).lock) {
+      (screen.orientation as any).lock('landscape').catch(() => {
+        console.log('[GamePage] Não foi possível travar orientação');
+      });
+    }
+  }, 50);
+
+  // Renderizar overlay de rotação para mobile (só aparece em portrait)
+  const rotateOverlayHtml = isMobileDevice ? `
+    <div class="rotate-screen-overlay" id="rotate-overlay">
+      <div class="rotate-screen-icon">📱↻</div>
+      <h2 class="rotate-screen-title">Gire seu celular</h2>
+      <p class="rotate-screen-text">Para jogar, coloque o celular no modo paisagem (deitado)</p>
+    </div>
+  ` : '';
+
   return `
     <style>
       /* ==================== HUD MELHORADO ==================== */
@@ -999,7 +1023,8 @@ export function GamePage(app: any, data: any): string {
       }
     </style>
 
-    <div class="game-container">
+    <div class="game-container ${isMobileDevice ? 'game-page-mobile' : ''}">
+      ${rotateOverlayHtml}
       <div id="game-over-overlay" class="game-over-overlay hidden">
         <div id="confetti-container" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; overflow: hidden;"></div>
         <div class="game-over-modal">
@@ -1119,9 +1144,73 @@ export function GamePage(app: any, data: any): string {
       <div class="game-table">
         <canvas id="pool-canvas" width="${TABLE_WIDTH + CANVAS_PADDING}" height="${TABLE_HEIGHT + CANVAS_PADDING}"></canvas>
         <audio id="remote-voice" autoplay style="display:none;"></audio>
+        
+        <!-- HUD Mobile - Só aparece em dispositivos mobile em landscape -->
+        ${isMobileDevice ? `
+          <div class="game-hud-mobile mobile-only" id="mobile-hud">
+            <!-- Jogador 1 (Esquerda) -->
+            <div class="hud-player-left">
+              <div class="hud-player-avatar ${gameState.currentPlayer === 1 ? 'active' : ''}" id="hud-p1-avatar"
+                   style="background-image: url('${roomData.owner?.avatar_url || ''}')">
+                ${!roomData.owner?.avatar_url ? '🎱' : ''}
+              </div>
+              <div class="hud-player-info">
+                <div class="hud-player-name" id="hud-p1-name">${player1Name}</div>
+                <div class="hud-player-balls" id="hud-p1-balls">
+                  <!-- Bolas serão atualizadas via JS -->
+                </div>
+              </div>
+            </div>
+            
+            <!-- Jogador 2 (Direita) -->
+            <div class="hud-player-right">
+              <div class="hud-player-avatar ${gameState.currentPlayer === 2 ? 'active' : ''}" id="hud-p2-avatar"
+                   style="background-image: url('${roomData.guest?.avatar_url || ''}')">
+                ${!roomData.guest?.avatar_url ? (isAI ? '🤖' : '🎱') : ''}
+              </div>
+              <div class="hud-player-info">
+                <div class="hud-player-name" id="hud-p2-name">${player2Name}</div>
+                <div class="hud-player-balls" id="hud-p2-balls">
+                  <!-- Bolas serão atualizadas via JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Barra de Controles Mobile (Inferior) -->
+          <div class="game-controls-bar mobile-only" id="mobile-controls">
+            <!-- Botões de Menu (Esquerda) -->
+            <div class="game-menu-buttons">
+              <button class="game-btn-icon" id="mobile-pause-btn" title="Pausar">⏸️</button>
+              <button class="game-btn-icon" id="mobile-sound-btn" title="Som">🔊</button>
+            </div>
+            
+            <!-- Info Central -->
+            <div class="game-turn-info">
+              <div class="game-turn-label">Turno</div>
+              <div class="game-turn-text" id="mobile-turn-text">${gameState.currentPlayer === 1 ? player1Name : player2Name}</div>
+            </div>
+            
+            <!-- Controles de Tacada (Direita) -->
+            <div class="game-shot-controls">
+              <div class="power-slider-mobile" id="mobile-power-slider">
+                <div class="power-slider-fill-mobile" id="mobile-power-fill" style="width: 0%;"></div>
+              </div>
+              <button class="game-shoot-btn-mobile" id="mobile-shoot-btn" title="Tacada">🎱</button>
+            </div>
+          </div>
+          
+          <!-- Menu de Pausa Mobile -->
+          <div class="game-pause-overlay hidden" id="mobile-pause-menu">
+            <h2 class="game-pause-title">⏸️ Jogo Pausado</h2>
+            <button class="game-pause-btn game-pause-btn-primary" id="mobile-resume-btn">▶️ Continuar</button>
+            <button class="game-pause-btn game-pause-btn-secondary" id="mobile-settings-btn">⚙️ Configurações</button>
+            <button class="game-pause-btn game-pause-btn-danger" id="mobile-quit-btn">🚪 Abandonar</button>
+          </div>
+        ` : ''}
       </div>
 
-      <div class="game-controls">
+      <div class="game-controls desktop-only">
         <div class="game-message-container">
           <p class="game-message" id="game-message">🎯 ${gameState.currentPlayer === 1 ? player1Name : player2Name}, sua vez!</p>
           <div id="animated-message-container"></div>

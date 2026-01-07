@@ -5,6 +5,7 @@ import './styles/main.css';
 import './styles/landing-extra.css';
 import './styles/checkout.css';
 import './styles/mobile.css'; // CSS Responsivo para Mobile/PWA
+import './styles/game-mobile.css'; // CSS específico para o jogo em mobile
 
 import { LandingPage, loadLiveRooms, loadReviews, loadTournaments, loadRankings } from './pages/LandingPage.js';
 import { LoginPage } from './pages/LoginPage.js';

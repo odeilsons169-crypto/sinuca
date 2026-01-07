@@ -1,0 +1,630 @@
+/* ================================================
+   🎱 SINUCA GAME - CSS do Jogo Mobile
+   ================================================
+   Modo de jogo específico para dispositivos mobile
+   - Força modo paisagem (landscape)
+   - HUD minimalista
+   - Controles touch
+   ================================================ */
+
+/* ================================================
+   TELA DE ROTAÇÃO - Aviso para girar o celular
+   ================================================ */
+.rotate-screen-overlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 100%);
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+}
+
+.rotate-screen-icon {
+    font-size: 80px;
+    margin-bottom: 24px;
+    animation: rotatePhone 2s ease-in-out infinite;
+}
+
+@keyframes rotatePhone {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(-15deg);
+    }
+
+    75% {
+        transform: rotate(15deg);
+    }
+}
+
+.rotate-screen-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--accent-green, #00ff88);
+}
+
+.rotate-screen-text {
+    font-size: 1rem;
+    color: #888;
+    max-width: 280px;
+}
+
+/* ================================================
+   GAME PAGE MOBILE - Fullscreen Landscape
+   ================================================ */
+@media screen and (max-width: 900px) {
+    .game-page-mobile {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        background: #0a0a10 !important;
+        z-index: 50000 !important;
+        overflow: hidden !important;
+        touch-action: none !important;
+    }
+
+    /* Esconder TUDO quando em jogo */
+    .game-page-mobile~.mobile-bottom-nav,
+    .game-page-mobile~.header,
+    body.game-active .mobile-bottom-nav,
+    body.game-active .header {
+        display: none !important;
+    }
+}
+
+/* ================================================
+   HUD MOBILE - Minimalista nos cantos
+   ================================================ */
+.game-hud-mobile {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    padding: 8px 16px;
+    padding-top: calc(8px + env(safe-area-inset-top, 0px));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+    z-index: 100;
+    pointer-events: none;
+}
+
+.game-hud-mobile>* {
+    pointer-events: auto;
+}
+
+/* Jogador Esquerdo */
+.hud-player-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hud-player-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #333;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid transparent;
+}
+
+.hud-player-avatar.active {
+    border-color: var(--accent-green, #00ff88);
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+.hud-player-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.hud-player-name {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #fff;
+    max-width: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hud-player-balls {
+    display: flex;
+    gap: 3px;
+}
+
+.hud-ball {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.hud-ball.solid {
+    background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+}
+
+.hud-ball.stripe {
+    background: linear-gradient(135deg, #4a90d9 0%, #2c5aa0 100%);
+    background-image:
+        linear-gradient(135deg, #4a90d9 0%, #2c5aa0 100%),
+        repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255, 255, 255, 0.5) 3px, rgba(255, 255, 255, 0.5) 6px);
+}
+
+.hud-ball.pocketed {
+    opacity: 0.3;
+}
+
+.hud-ball.eight {
+    background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
+}
+
+/* Jogador Direito (espelhado) */
+.hud-player-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-direction: row-reverse;
+}
+
+.hud-player-right .hud-player-info {
+    text-align: right;
+}
+
+.hud-player-right .hud-player-balls {
+    justify-content: flex-end;
+}
+
+/* ================================================
+   MENSAGEM CENTRAL DO JOGO
+   ================================================ */
+.game-message-center {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.9);
+    padding: 16px 32px;
+    border-radius: 12px;
+    text-align: center;
+    z-index: 200;
+    animation: popIn 0.3s ease-out;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+@keyframes popIn {
+    from {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+.game-message-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent-green, #00ff88);
+    margin-bottom: 4px;
+}
+
+.game-message-subtitle {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+/* ================================================
+   BARRA DE CONTROLES INFERIOR
+   ================================================ */
+.game-controls-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    padding: 8px 16px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
+    z-index: 100;
+}
+
+/* Botões do menu (esquerda) */
+.game-menu-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.game-btn-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.game-btn-icon:active {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(0.95);
+}
+
+/* Info central */
+.game-turn-info {
+    text-align: center;
+    color: #fff;
+}
+
+.game-turn-label {
+    font-size: 0.65rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.game-turn-text {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent-green, #00ff88);
+}
+
+/* Controles de tacada (direita) */
+.game-shot-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Slider de força */
+.power-slider-mobile {
+    width: 100px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.power-slider-fill-mobile {
+    height: 100%;
+    background: linear-gradient(90deg, #00ff88 0%, #ffc107 50%, #ff4444 100%);
+    border-radius: 4px;
+    transition: width 0.1s;
+}
+
+.power-slider-thumb {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Botão de tacada */
+.game-shoot-btn-mobile {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-green, #00ff88) 0%, #00d4ff 100%);
+    border: none;
+    font-size: 1.8rem;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 255, 136, 0.4);
+    transition: all 0.2s;
+}
+
+.game-shoot-btn-mobile:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 10px rgba(0, 255, 136, 0.3);
+}
+
+.game-shoot-btn-mobile:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ================================================
+   INDICADOR DE MIRA (Touch)
+   ================================================ */
+.aim-indicator {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    border: 2px solid rgba(0, 255, 136, 0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 50;
+    display: none;
+}
+
+.aim-indicator.active {
+    display: block;
+}
+
+.aim-indicator::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background: var(--accent-green, #00ff88);
+    border-radius: 50%;
+}
+
+/* ================================================
+   LINHA DE MIRA TOUCH
+   ================================================ */
+.aim-line-touch {
+    position: fixed;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-green, #00ff88), transparent);
+    transform-origin: left center;
+    pointer-events: none;
+    z-index: 49;
+    opacity: 0.7;
+}
+
+/* ================================================
+   MENU DE PAUSA MOBILE
+   ================================================ */
+.game-pause-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.game-pause-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 24px;
+}
+
+.game-pause-btn {
+    width: 200px;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.game-pause-btn-primary {
+    background: linear-gradient(135deg, var(--accent-green, #00ff88), #00d4ff);
+    border: none;
+    color: #000;
+}
+
+.game-pause-btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+.game-pause-btn-danger {
+    background: rgba(255, 68, 68, 0.2);
+    border: 1px solid rgba(255, 68, 68, 0.4);
+    color: #ff4444;
+}
+
+/* ================================================
+   ANIMAÇÕES DE FEEDBACK
+   ================================================ */
+.ball-pocketed-feedback {
+    position: fixed;
+    font-size: 3rem;
+    animation: ballPocketed 1s ease-out forwards;
+    pointer-events: none;
+    z-index: 150;
+}
+
+@keyframes ballPocketed {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.5);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(0) translateY(-50px);
+        opacity: 0;
+    }
+}
+
+.foul-indicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    color: #ff4444;
+    animation: foulShake 0.5s ease-in-out;
+    z-index: 200;
+}
+
+@keyframes foulShake {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    20% {
+        transform: translate(-50%, -50%) rotate(-10deg);
+    }
+
+    40% {
+        transform: translate(-50%, -50%) rotate(10deg);
+    }
+
+    60% {
+        transform: translate(-50%, -50%) rotate(-10deg);
+    }
+
+    80% {
+        transform: translate(-50%, -50%) rotate(10deg);
+    }
+}
+
+/* ================================================
+   CANVAS TOUCH AREA
+   ================================================ */
+.game-canvas-touch-area {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 60px;
+    z-index: 10;
+    touch-action: none;
+}
+
+/* ================================================
+   ORIENTAÇÃO - SOMENTE LANDSCAPE
+   ================================================ */
+@media screen and (max-width: 900px) and (orientation: portrait) {
+    .game-page-mobile .rotate-screen-overlay {
+        display: flex !important;
+    }
+
+    .game-page-mobile .game-canvas-container,
+    .game-page-mobile .game-hud-mobile,
+    .game-page-mobile .game-controls-bar {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 900px) and (orientation: landscape) {
+    .game-page-mobile .rotate-screen-overlay {
+        display: none !important;
+    }
+
+    .game-page-mobile .game-canvas-container,
+    .game-page-mobile .game-hud-mobile,
+    .game-page-mobile .game-controls-bar {
+        display: flex !important;
+    }
+}
+
+/* ================================================
+   VIBRAÇÃO VISUAL (quando não suporta vibração real)
+   ================================================ */
+.screen-shake {
+    animation: screenShake 0.3s ease;
+}
+
+@keyframes screenShake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20% {
+        transform: translateX(-5px);
+    }
+
+    40% {
+        transform: translateX(5px);
+    }
+
+    60% {
+        transform: translateX(-3px);
+    }
+
+    80% {
+        transform: translateX(3px);
+    }
+}
+
+/* ================================================
+   ESCONDER CONTROLES DESKTOP EM MOBILE
+   ================================================ */
+@media screen and (max-width: 900px) {
+    .desktop-only {
+        display: none !important;
+    }
+
+    .game-page-mobile .game-header,
+    .game-page-mobile .game-controls.desktop-only,
+    .game-page-mobile .ball-legend,
+    .game-page-mobile .game-instructions,
+    .game-page-mobile .music-player-mini {
+        display: none !important;
+    }
+
+    .game-page-mobile .game-table {
+        position: absolute !important;
+        top: 50px !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 60px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .game-page-mobile canvas {
+        max-width: 100% !important;
+        max-height: 100% !important;
+        object-fit: contain !important;
+    }
+
+    /* Esconder game-over-overlay em desktop-only não deve afetar mobile */
+    .game-page-mobile .game-over-overlay {
+        z-index: 500 !important;
+    }
+}
